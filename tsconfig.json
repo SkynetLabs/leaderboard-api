@@ -1,0 +1,22 @@
+{
+  "compilerOptions": {
+    "module": "commonjs",
+    "target": "es5",
+    "noImplicitReturns": true,
+    "noUnusedLocals": true,
+    "outDir": "dist",
+    "sourceMap": true,
+    "strict": false,
+    "lib": ["es2020"],
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "typeRoots": [ "./types", "./node_modules/@types"]
+  },
+  "include": ["src", "types"],
+  "exclude": [
+    "./node_modules",
+    "typings",
+    "./dist"
+  ],
+  "compileOnSave": true,
+}
