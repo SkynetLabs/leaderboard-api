@@ -1,0 +1,31 @@
+{
+  "name": "leaderboard-api",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "engines": {
+    "node": "14"
+  },
+  "scripts": {
+    "build": "tsc",
+    "lint": "tslint --project tsconfig.json",
+    "watch": "tsnodemon -x 'ts-node src/index.ts'",
+    "start": "ts-node src/index.ts"
+  },
+  "author": "Peter-Jan Brone",
+  "license": "ISC",
+  "dependencies": {
+    "@types/mongodb": "^3.6.12",
+    "@types/node": "^12.20.7",
+    "dotenv": "^8.2.0",
+    "express": "^4.17.1",
+    "mongodb": "^3.6.5",
+    "ts-node": "^8.10.2",
+    "typescript": "^3.9.9"
+  },
+  "devDependencies": {
+    "@types/express": "^4.17.11",
+    "tslint": "^5.20.1",
+    "tsnodemon": "^1.2.2"
+  }
+}
