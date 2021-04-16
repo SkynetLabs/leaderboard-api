@@ -11,8 +11,13 @@ export async function handler(
 ): Promise<void> {  
   // grab query string parameters
   const userPK = req.query.userPK || "";
+
   const skip = req.query.skip || 0;
   const limit = req.query.limit || 20;
+
+  // defaults to 'newContentTotal' 'desc'
+  const sortBy = (req.query.sortBy || "newContentTotal") as string;
+  const sortDir = req.query.sortDir === 'asc' ? 1 : -1
 
   // validate query string parameters
   // TODO
@@ -101,7 +106,7 @@ export async function handler(
         },
       }
     },
-    { $sort: { newContentTotal: -1 } }, // or other sort
+    { $sort:  { [sortBy]: sortDir }},
     {
       $group: {
         _id: null,

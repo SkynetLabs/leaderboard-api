@@ -9,8 +9,13 @@ export async function handler(
 ): Promise<void> {
   // grab query string parameters
   const skylink = req.query.skylink || "";
+  
   const skip = req.query.skip || 0;
   const limit = req.query.limit || 20;
+
+  // defaults to 'total' 'desc'
+  const sortBy = (req.query.sortBy || "total") as string;
+  const sortDir = req.query.sortDir === 'asc' ? 1 : -1
 
   // validate query string parameters
   // TODO
@@ -31,7 +36,7 @@ export async function handler(
         last24H: { $sum: { $cond: ['$last24H', 1, 0] } }
       }
     },
-    { $sort: { total: -1 } }, // or other sort
+    { $sort:  { [sortBy]: sortDir }},
     {
       $group: {
         _id: null,

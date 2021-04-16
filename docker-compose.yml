@@ -9,9 +9,9 @@ services:
     environment:
       MONGO_CONNECTION_STRING: "mongodb://mongo:27017"
       DEBUG_ENABLED: "false"
-      PORT: "3000"
+      PORT: "4000"
     ports:
-      - "3000:3000"
+      - "4000:4000"
   mongo:
     image: "bitnami/mongodb:4.2"
     container_name: mongo
