@@ -42,7 +42,7 @@ export async function handler(
         _id: null,
         rows: {
           $push: {
-            skapp: '$_id',
+            skylink: '$_id',
             total: { $toInt: '$total' },
             last24H: { $toInt: '$last24H' },
           }
@@ -58,7 +58,7 @@ export async function handler(
     {
       $replaceRoot: {
         newRoot: {
-          skapp: "$rows.skapp",
+          skylink: "$rows.skylink",
           total: "$rows.total",
           last24H: "$rows.last24H",
           rank: { $toInt: { $sum: ['$rank', 1] } }

@@ -37,6 +37,44 @@ Where it makes sense, the following filters can be applied:
 - skappName
 ### Responses
 
+```json
+// skapp ranking
+[
+  {
+    "skapp": "snew.hns",
+    "total": 2,
+    "last24H": 0,
+    "rank": 1
+  }
+]
+
+// content ranking
+[
+  {
+    "skylink": "AABZ0Kjn6DP08XAVunUFRbo6AQYhML9TJCKHtr35_k4HQw",
+    "total": 1,
+    "last24H": 0,
+    "rank": 1
+  },
+  {
+    "skylink": "AABJiWiYt823xEv5D8o0J7HyctPT1AdUS-_1hthF5GTfqg",
+    "total": 1,
+    "last24H": 0,
+    "rank": 2
+  }
+]
+
+// user ranking
+[
+  {
+    "newContentLast24H": 0,
+    "newContentTotal": 2,
+    "interactionsLast24H": 0,
+    "interactionsTotal": 0,
+    "rank": 1
+  }
+]
+```
 
 ## Usage
 
