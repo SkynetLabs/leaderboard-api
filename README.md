@@ -34,7 +34,8 @@ Where it makes sense, the following filters can be applied:
 
 - skylink
 - userPK 
-- skappName
+- skapp
+
 ### Responses
 
 ```json

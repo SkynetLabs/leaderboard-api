@@ -10,7 +10,7 @@ export async function handler(
 ): Promise<void> {
   // grab query string parameters
   const userPK = req.query.userPK || "";
-  const skappName = req.query.skappName || "";
+  const skapp = req.query.skapp || "";
 
   const skip = req.query.skip || 0;
   const limit = req.query.limit || 20;
@@ -94,9 +94,9 @@ export async function handler(
   }
 
   // filter on skapp name if necessary
-  if (skappName) {
+  if (skapp) {
     pipeline = [
-      { $match: { skapp: skappName } },
+      { $match: { skapp } },
       ...pipeline,
     ]
   }
