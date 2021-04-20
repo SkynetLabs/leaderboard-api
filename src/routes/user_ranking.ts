@@ -165,6 +165,8 @@ export async function handler(
       });
   }
 
-  const skappsCatalogCursor = entriesDB.aggregate(pipeline)
-  res.json(await skappsCatalogCursor.toArray())
+  const userCatalogCursor = entriesDB.aggregate(pipeline)
+  const userCatalog = await userCatalogCursor.toArray()
+  res.json(userCatalog)
+  res.status(200)
 }
