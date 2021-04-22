@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import { Collection } from 'mongodb';
-import { discoverUser } from './util';
+import { upsertUser as discoverUser } from './util';
 
 export async function handler(
   req: Request,
