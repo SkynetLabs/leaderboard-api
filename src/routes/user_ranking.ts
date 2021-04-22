@@ -12,8 +12,8 @@ export async function handler(
   // grab query string parameters
   const userPK = req.query.userPK || "";
 
-  const skip = req.query.skip || 0;
-  const limit = req.query.limit || 20;
+  const skip = parseInt(req.query.skip as string || '0', 10);
+  const limit = parseInt(req.query.limit as string || '20', 10);
 
   // defaults to 'newContentTotal' 'desc'
   const sortBy = (req.query.sortBy || "newContentTotal") as string;
