@@ -167,5 +167,7 @@ export async function handler(
 
   const userCatalogCursor = entriesDB.aggregate(pipeline)
   const userCatalog = await userCatalogCursor.toArray()
+  
+  res.set("Connection", "close")
   res.status(200).json(userCatalog)
 }

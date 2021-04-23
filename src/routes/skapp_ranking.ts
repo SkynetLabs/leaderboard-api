@@ -102,5 +102,7 @@ export async function handler(
 
   const skappsCatalogCursor = entriesDB.aggregate(pipeline)
   const skappsCatalog = await skappsCatalogCursor.toArray()
+
+  res.set("Connection", "close")
   res.status(200).json(skappsCatalog);
 }
