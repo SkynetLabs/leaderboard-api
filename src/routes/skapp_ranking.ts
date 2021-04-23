@@ -104,4 +104,5 @@ export async function handler(
   const skappsCatalog = await skappsCatalogCursor.toArray()
   res.json(skappsCatalog)
   res.status(200);
+  res.end();
 }

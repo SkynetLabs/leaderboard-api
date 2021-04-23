@@ -81,4 +81,5 @@ export async function handler(
   const contentCatalog = await contentCatalogCursor.toArray()
   res.json(contentCatalog)
   res.status(200);
+  res.end();
 }
