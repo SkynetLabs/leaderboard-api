@@ -39,7 +39,7 @@ export function extractQueryStringParams(
   
     // sorting
     const sortBy = (req.query.sortBy || defaultSortBy) as string;
-    const sortDir = req.query.sortDir
+    const sortDir = (req.query.sortDir || 'asc') as string;
   
     // validate the params
     if (typeof skapp !== 'string') {
