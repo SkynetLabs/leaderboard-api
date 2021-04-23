@@ -62,7 +62,7 @@ export function extractQueryStringParams(
       return [null, new Error("Parameter 'limit' should be positive and non zero")]
     }
 
-    if (skylink) {  
+    if (skylink) {
       const regexp = /^(?<skylink>[a-zA-Z0-9-_]{46})$/;
       const matchResult = skylink.match(regexp)
       if (!matchResult || !matchResult.groups.skylink) {

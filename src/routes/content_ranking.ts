@@ -69,11 +69,11 @@ export async function handler(
     { $limit: limit },
   ];
 
-  // filter on user if necessary
+  // filter on skylink if necessary
   if (skylink) {
     pipeline = [
-      { $match: { skylink } },
       ...pipeline,
+      { $match: { skylink } },
     ]
   }
 

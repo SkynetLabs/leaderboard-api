@@ -73,8 +73,8 @@ export async function handler(
   // filter on user if necessary
   if (userPK) {
     pipeline = [
-      { $match: { userPK } },
       ...pipeline,
+      { $match: { userPK } },
     ]
 
     // run user discovery, we don't await here on purpose
@@ -95,8 +95,8 @@ export async function handler(
   // filter on skapp name if necessary
   if (skapp) {
     pipeline = [
-      { $match: { skapp } },
       ...pipeline,
+      { $match: { skapp } },
     ]
   }
 
