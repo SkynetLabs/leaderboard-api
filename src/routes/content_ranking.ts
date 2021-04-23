@@ -65,8 +65,6 @@ export async function handler(
         }
       }
     },
-    { $skip: skip },
-    { $limit: limit },
   ];
 
   // filter on skylink if necessary
@@ -76,6 +74,12 @@ export async function handler(
       { $match: { skylink } },
     ]
   }
+
+  pipeline = [
+    ...pipeline,
+    { $skip: skip },
+    { $limit: limit },
+  ]
 
   const contentCatalogCursor = entriesDB.aggregate(pipeline)
   const contentCatalog = await contentCatalogCursor.toArray()

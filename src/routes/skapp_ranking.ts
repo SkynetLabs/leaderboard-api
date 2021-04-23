@@ -66,8 +66,6 @@ export async function handler(
         }
       }
     },
-    { $skip: skip },
-    { $limit: limit },
   ];
 
   // filter on user if necessary
@@ -99,6 +97,12 @@ export async function handler(
       { $match: { skapp } },
     ]
   }
+
+  pipeline = [
+    ...pipeline,
+    { $skip: skip },
+    { $limit: limit },
+  ]
 
   const skappsCatalogCursor = entriesDB.aggregate(pipeline)
   const skappsCatalog = await skappsCatalogCursor.toArray()
