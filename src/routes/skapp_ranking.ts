@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import { Collection } from 'mongodb';
-import { upsertUser as discoverUser } from './util';
+import { extractQueryStringParams, upsertUser as discoverUser } from './util';
 
 export async function handler(
   req: Request,
@@ -8,19 +8,18 @@ export async function handler(
   entriesDB: Collection,
   usersDB: Collection,
 ): Promise<void> {
-  // grab query string parameters
-  const userPK = req.query.userPK || "";
-  const skapp = req.query.skapp || "";
+  // extract and validate query string parameters
+  const defaultSortColumn = 'total'
+  const [params, err] = extractQueryStringParams(req, defaultSortColumn)
 
-  const skip = parseInt(req.query.skip as string || '0', 10);
-  const limit = parseInt(req.query.limit as string || '20', 10);
+  // return 'Bad Request' if query string param was invalid
+  if (err !== null) {
+    res.status(400).json({ error: err.message })
+    return;
+  }
 
-  // defaults to 'total' 'desc'
-  const sortBy = (req.query.sortBy || "newContentTotal") as string;
-  const sortDir = req.query.sortDir === 'asc' ? 1 : -1
-
-  // validate query string parameters
-  // TODO
+  // extract params
+  const {userPK, skapp, skip, limit, sortBy, sortDir} = params
 
   // define the aggregation pipeline
   let pipeline: object[] = [
@@ -38,7 +37,7 @@ export async function handler(
         last24H: { $sum: { $cond: ['$last24H', 1, 0] } }
       }
     },
-    { $sort:  { [sortBy]: sortDir }},
+    { $sort:  { [sortBy]: sortDir === 'asc' ? 1 : -1 }},
     {
       $group: {
         _id: null,

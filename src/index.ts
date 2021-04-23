@@ -22,7 +22,7 @@ async function bootAPI(port: number, db: MongoDB): Promise<void> {
     userHandler(req, res, entriesDB, usersDB)
   });
   app.get('/content', (req, res) => {
-    contentHandler(req, res, entriesDB, usersDB)
+    contentHandler(req, res, entriesDB)
   });
 }
 

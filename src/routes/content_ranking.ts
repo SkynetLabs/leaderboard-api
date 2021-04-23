@@ -1,24 +1,24 @@
 import { Request, Response } from 'express';
 import { Collection } from 'mongodb';
+import { extractQueryStringParams } from './util';
 
 export async function handler(
   req: Request,
   res: Response,
   entriesDB: Collection,
-  usersDB: Collection,
 ): Promise<void> {
-  // grab query string parameters
-  const skylink = req.query.skylink || "";
-  
-  const skip = parseInt(req.query.skip as string || '0', 10);
-  const limit = parseInt(req.query.limit as string || '20', 10);
+  // extract and validate query string parameters
+  const defaultSortColumn = 'total'
+  const [params, err] = extractQueryStringParams(req, defaultSortColumn)
 
-  // defaults to 'total' 'desc'
-  const sortBy = (req.query.sortBy || "total") as string;
-  const sortDir = req.query.sortDir === 'asc' ? 1 : -1
+  // return 'Bad Request' if query string param was invalid
+  if (err !== null) {
+    res.status(400).json({ error: err.message })
+    return;
+  }
 
-  // validate query string parameters
-  // TODO
+  // extract params
+  const {skylink, skip, limit, sortBy, sortDir} = params
 
   // define the aggregation pipeline
   let pipeline: object[] = [
@@ -36,7 +36,7 @@ export async function handler(
         last24H: { $sum: { $cond: ['$last24H', 1, 0] } }
       }
     },
-    { $sort:  { [sortBy]: sortDir }},
+    { $sort:  { [sortBy]: sortDir === 'asc' ? 1 : -1 }},
     {
       $group: {
         _id: null,

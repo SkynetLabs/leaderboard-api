@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import { Collection } from 'mongodb';
 import { EntryType } from './types';
-import { upsertUser as discoverUser } from './util';
+import { extractQueryStringParams, upsertUser as discoverUser } from './util';
 
 export async function handler(
   req: Request,
@@ -9,18 +9,18 @@ export async function handler(
   entriesDB: Collection,
   usersDB: Collection,
 ): Promise<void> {  
-  // grab query string parameters
-  const userPK = req.query.userPK || "";
+  // extract and validate query string parameters
+  const defaultSortColumn = 'newContentTotal'
+  const [params, err] = extractQueryStringParams(req, defaultSortColumn)
 
-  const skip = parseInt(req.query.skip as string || '0', 10);
-  const limit = parseInt(req.query.limit as string || '20', 10);
+  // return 'Bad Request' if query string param was invalid
+  if (err !== null) {
+    res.status(400).json({ error: err.message })
+    return;
+  }
 
-  // defaults to 'newContentTotal' 'desc'
-  const sortBy = (req.query.sortBy || "newContentTotal") as string;
-  const sortDir = req.query.sortDir === 'asc' ? 1 : -1
-
-  // validate query string parameters
-  // TODO
+  // extract params
+  const {userPK, skip, limit, sortBy, sortDir} = params
 
   // define last24H date
   const yesterday = new Date(new Date().setDate(new Date().getDate() - 1))
@@ -106,13 +106,13 @@ export async function handler(
         },
       }
     },
-    { $sort:  { [sortBy]: sortDir }},
+    { $sort:  { [sortBy]: sortDir === 'asc' ? 1 : -1 }},
     {
       $group: {
         _id: null,
         rows: {
           $push: {
-            user: '$userPK',
+            userPK: '$_id',
             newContentLast24H: { $toInt: '$newContentLast24H' },
             newContentTotal: { $toInt: '$newContentTotal' },
             interactionsLast24H: { $toInt: '$interactionsLast24H' },
@@ -130,7 +130,7 @@ export async function handler(
     {
       $replaceRoot: {
         newRoot: {
-          user: '$rows.userPK',
+          userPK: '$rows.userPK',
           newContentLast24H: { $toInt: '$rows.newContentLast24H' },
           newContentTotal: { $toInt: '$rows.newContentTotal' },
           interactionsLast24H: { $toInt: '$rows.interactionsLast24H' },
@@ -146,7 +146,7 @@ export async function handler(
   // filter on user if necessary
   if (userPK) {
     pipeline = [
-      { $match: { user: userPK } },
+      { $match: { userPK } },
       ...pipeline,
     ]
 
