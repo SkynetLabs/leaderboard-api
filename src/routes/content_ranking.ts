@@ -79,7 +79,5 @@ export async function handler(
 
   const contentCatalogCursor = entriesDB.aggregate(pipeline)
   const contentCatalog = await contentCatalogCursor.toArray()
-  res.json(contentCatalog)
-  res.status(200);
-  res.end();
+  res.status(200).json(contentCatalog);
 }
