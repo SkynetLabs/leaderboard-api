@@ -36,7 +36,7 @@ export async function handler(
         last24H: { $sum: { $cond: ['$last24H', 1, 0] } }
       }
     },
-    { $sort:  { [sortBy]: sortDir === 'asc' ? 1 : -1 }},
+    { $sort:  { [sortBy]: sortDir === 'asc' ? 1 : -1, _id: 1 }},
     {
       $group: {
         _id: null,
@@ -71,7 +71,7 @@ export async function handler(
   if (skylink) {
     pipeline = [
       ...pipeline,
-      { $match: { skylink } },
+      { $match: { skylink: {$regex: skylink } } },
     ]
   }
 

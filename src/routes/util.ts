@@ -62,13 +62,15 @@ export function extractQueryStringParams(
       return [null, new Error("Parameter 'limit' should be positive and non zero")]
     }
 
-    if (skylink) {
-      const regexp = /^(?<skylink>[a-zA-Z0-9-_]{46})$/;
-      const matchResult = skylink.match(regexp)
-      if (!matchResult || !matchResult.groups.skylink) {
-        return [null, new Error("Parameter 'skylink' should be a valid, 46-character skylink")]
-      }
-    }
+    // TODO: should we enable skylink validation?
+    //
+    // if (skylink) {
+    //   const regexp = /^(?<skylink>[a-zA-Z0-9-_]{46})$/;
+    //   const matchResult = skylink.match(regexp)
+    //   if (!matchResult || !matchResult.groups.skylink) {
+    //     return [null, new Error("Parameter 'skylink' should be a valid, 46-character skylink")]
+    //   }
+    // }
   
     // TODO user PK validation
   

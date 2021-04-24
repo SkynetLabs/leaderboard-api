@@ -37,7 +37,7 @@ export async function handler(
         last24H: { $sum: { $cond: ['$last24H', 1, 0] } }
       }
     },
-    { $sort:  { [sortBy]: sortDir === 'asc' ? 1 : -1 }},
+    { $sort:  { [sortBy]: sortDir === 'asc' ? 1 : -1, _id: 1 }},
     {
       $group: {
         _id: null,
@@ -72,7 +72,7 @@ export async function handler(
   if (userPK) {
     pipeline = [
       ...pipeline,
-      { $match: { userPK } },
+      { $match: { userPK: { $regex: userPK } } },
     ]
 
     // run user discovery, we don't await here on purpose
@@ -94,7 +94,7 @@ export async function handler(
   if (skapp) {
     pipeline = [
       ...pipeline,
-      { $match: { skapp } },
+      { $match: { skapp: { $regex: skapp, $options: "i" } } },
     ]
   }
 

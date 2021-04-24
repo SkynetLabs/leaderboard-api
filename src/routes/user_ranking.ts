@@ -106,7 +106,7 @@ export async function handler(
         },
       }
     },
-    { $sort:  { [sortBy]: sortDir === 'asc' ? 1 : -1 }},
+    { $sort:  { [sortBy]: sortDir === 'asc' ? 1 : -1, _id: 1 }},
     {
       $group: {
         _id: null,
@@ -144,8 +144,8 @@ export async function handler(
   // filter on user if necessary
   if (userPK) {
     pipeline = [
-      { $match: { userPK } },
       ...pipeline,
+      { $match: { userPK: { $regex: userPK } } },
     ]
 
     // run user discovery, we don't await here on purpose
