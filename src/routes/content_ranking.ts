@@ -22,6 +22,7 @@ export async function handler(
 
   // define the aggregation pipeline
   let pipeline: object[] = [
+    { $match: { skylink: {$ne: ""}}},
     {
       $addFields: {
         last24H: {
