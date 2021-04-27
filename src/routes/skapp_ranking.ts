@@ -23,7 +23,7 @@ export async function handler(
 
   // define the aggregation pipeline
   let pipeline: object[] = [
-    { $match: { skapp: {$ne: ""}}},
+    { $match: { skapp: {$ne: ""}, root: {$ne: ""}}},
     {
       $addFields: {
         last24H: {
