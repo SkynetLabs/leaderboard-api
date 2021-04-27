@@ -17,6 +17,15 @@ export async function upsertUser(userDB: Collection, userPK: string): Promise<bo
         contentInteractionsCurrPage : new NumberInt(0),
         contentInteractionsNumEntries: new NumberInt(0),
         contentInteractionsNoneFound: new NumberInt(0),
+
+        postsCurrPage: new NumberInt(0),
+        postsCurrNumEntries: new NumberInt(0),
+        postsConsecNoneFound: new NumberInt(0),
+
+        commentsCurrPage: new NumberInt(0),
+        commentsCurrNumEntries: new NumberInt(0),
+        commentsConsecNoneFound: new NumberInt(0),
+
         createdAt: new Date(),
       }
     },
