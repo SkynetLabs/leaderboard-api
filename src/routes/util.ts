@@ -4,6 +4,13 @@ import { Request } from 'express';
 import { DEBUG_PIPELINE } from "../consts";
 
 export async function upsertUser(userDB: Collection, userPK: string): Promise<boolean> {
+  // only upsert userPK if it matches the following regex
+  const regexp = /^(?<userPK>[a-z0-9]{64})$/;
+  const matchResult = userPK.match(regexp)
+  if (!matchResult || !matchResult.groups.userPK) {
+    return false;
+  }
+
   const { upsertedCount } = await userDB.updateOne(
     { userPK },
     {
