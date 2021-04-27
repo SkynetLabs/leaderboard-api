@@ -1,6 +1,7 @@
 import { Collection, Int32 as NumberInt } from "mongodb";
 import { QueryStringParams } from "./types";
 import { Request } from 'express';
+import { DEBUG_PIPELINE } from "../consts";
 
 export async function upsertUser(userDB: Collection, userPK: string): Promise<boolean> {
   const { upsertedCount } = await userDB.updateOne(
@@ -30,7 +31,7 @@ export function extractQueryStringParams(
 ): [QueryStringParams | null, Error | null] {
     // filters
     const skapp = req.query.skapp || "";  
-    const skylink = req.query.skylink || "";
+    const identifier = req.query.identifier || "";
     const userPK = req.query.userPK || "";
 
     // pagination
@@ -45,8 +46,8 @@ export function extractQueryStringParams(
     if (typeof skapp !== 'string') {
       return [null, new Error("Parameter 'skapp' should be a string")]
     }
-    if (typeof skylink !== 'string') {
-      return [null, new Error("Parameter 'skylink' should be a string")]
+    if (typeof identifier !== 'string') {
+      return [null, new Error("Parameter 'identifier' should be a string")]
     }
     if (typeof userPK !== 'string') {
       return [null, new Error("Parameter 'userPK' should be a string")]
@@ -77,7 +78,7 @@ export function extractQueryStringParams(
     return [{
       // filters
       skapp,
-      skylink,
+      identifier,
       userPK,
       
       // pagination
@@ -88,4 +89,10 @@ export function extractQueryStringParams(
       sortBy,
       sortDir,
     }, null]
+}
+
+export function printPipeline(pipeline: object[]): void {
+  if (DEBUG_PIPELINE) {
+    console.log(JSON.stringify(pipeline))
+  }
 }

@@ -11,3 +11,6 @@ export const MONGO_DB_NAME =
 
 export const LEADERBOARDAPI_PORT =
   parseInt(process.env.PORT || '3000', 10)
+
+export const DEBUG_PIPELINE =
+  process.env.DEBUG_PIPELINE === 'true' || false

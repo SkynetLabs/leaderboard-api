@@ -6,7 +6,7 @@ export enum EntryType {
 export interface QueryStringParams {
   // filters
   skapp?: string;
-  skylink?: string;
+  identifier?: string;
   userPK?: string;
   
   // pagination

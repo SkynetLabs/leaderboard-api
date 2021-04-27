@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import { Collection } from 'mongodb';
-import { extractQueryStringParams } from './util';
+import { extractQueryStringParams, printPipeline } from './util';
 
 export async function handler(
   req: Request,
@@ -18,11 +18,11 @@ export async function handler(
   }
 
   // extract params
-  const {skylink, skip, limit, sortBy, sortDir} = params
+  const {identifier, skip, limit, sortBy, sortDir} = params
 
   // define the aggregation pipeline
   let pipeline: object[] = [
-    { $match: { skylink: {$ne: ""}}},
+    { $match: { root: {$ne: ""}}},
     {
       $addFields: {
         last24H: {
@@ -32,18 +32,18 @@ export async function handler(
     },
     {
       $group: {
-        _id: '$skylink',
+        _id: '$root',
         total: { $sum: 1 },
         last24H: { $sum: { $cond: ['$last24H', 1, 0] } }
       }
     },
-    { $sort:  { [sortBy]: sortDir === 'asc' ? 1 : -1, _id: 1 }},
+    { $sort:  { [sortBy]: sortDir === 'asc' ? 1 : -1, _id: -1 }},
     {
       $group: {
         _id: null,
         rows: {
           $push: {
-            skylink: '$_id',
+            identifier: '$_id',
             total: { $toInt: '$total' },
             last24H: { $toInt: '$last24H' },
           }
@@ -59,7 +59,7 @@ export async function handler(
     {
       $replaceRoot: {
         newRoot: {
-          skylink: "$rows.skylink",
+          identifier: "$rows.identifier",
           total: "$rows.total",
           last24H: "$rows.last24H",
           rank: { $toInt: { $sum: ['$rank', 1] } }
@@ -68,11 +68,11 @@ export async function handler(
     },
   ];
 
-  // filter on skylink if necessary
-  if (skylink) {
+  // filter on identifier if necessary
+  if (identifier) {
     pipeline = [
       ...pipeline,
-      { $match: { skylink: {$regex: skylink } } },
+      { $match: { identifier: {$regex: identifier } } },
     ]
   }
 
@@ -82,6 +82,8 @@ export async function handler(
     { $limit: limit },
   ]
 
+  printPipeline(pipeline) // will only print if flag is set
+  
   const contentCatalogCursor = entriesDB.aggregate(pipeline)
   const contentCatalog = await contentCatalogCursor.toArray()
 

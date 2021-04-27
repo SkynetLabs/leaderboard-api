@@ -32,7 +32,7 @@ parameters:
 
 Where it makes sense, the following filters can be applied:
 
-- skylink
+- identifier
 - userPK 
 - skapp
 
@@ -52,13 +52,13 @@ Where it makes sense, the following filters can be applied:
 // content ranking
 [
   {
-    "skylink": "AABZ0Kjn6DP08XAVunUFRbo6AQYhML9TJCKHtr35_k4HQw",
+    "identifier": "AABZ0Kjn6DP08XAVunUFRbo6AQYhML9TJCKHtr35_k4HQw",
     "total": 1,
     "last24H": 0,
     "rank": 1
   },
   {
-    "skylink": "AABJiWiYt823xEv5D8o0J7HyctPT1AdUS-_1hthF5GTfqg",
+    "identifier": "AABJiWiYt823xEv5D8o0J7HyctPT1AdUS-_1hthF5GTfqg",
     "total": 1,
     "last24H": 0,
     "rank": 2

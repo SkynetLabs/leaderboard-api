@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import { Collection } from 'mongodb';
 import { EntryType } from './types';
-import { extractQueryStringParams, upsertUser as discoverUser } from './util';
+import { extractQueryStringParams, printPipeline, upsertUser as discoverUser } from './util';
 
 export async function handler(
   req: Request,
@@ -106,7 +106,7 @@ export async function handler(
         },
       }
     },
-    { $sort:  { [sortBy]: sortDir === 'asc' ? 1 : -1, _id: 1 }},
+    { $sort:  { [sortBy]: sortDir === 'asc' ? 1 : -1, _id: -1 }},
     {
       $group: {
         _id: null,
@@ -168,6 +168,8 @@ export async function handler(
     { $skip: skip },
     { $limit: limit },
   ]
+
+  printPipeline(pipeline) // will only print if flag is set
 
   const userCatalogCursor = entriesDB.aggregate(pipeline)
   const userCatalog = await userCatalogCursor.toArray()

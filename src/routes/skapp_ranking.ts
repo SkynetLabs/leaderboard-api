@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import { Collection } from 'mongodb';
-import { extractQueryStringParams, upsertUser as discoverUser } from './util';
+import { extractQueryStringParams, printPipeline, upsertUser as discoverUser } from './util';
 
 export async function handler(
   req: Request,
@@ -38,7 +38,7 @@ export async function handler(
         last24H: { $sum: { $cond: ['$last24H', 1, 0] } }
       }
     },
-    { $sort:  { [sortBy]: sortDir === 'asc' ? 1 : -1, _id: 1 }},
+    { $sort:  { [sortBy]: sortDir === 'asc' ? 1 : -1, _id: -1 }},
     {
       $group: {
         _id: null,
@@ -105,6 +105,8 @@ export async function handler(
     { $limit: limit },
   ]
 
+  printPipeline(pipeline) // will only print if flag is set
+  
   const skappsCatalogCursor = entriesDB.aggregate(pipeline)
   const skappsCatalog = await skappsCatalogCursor.toArray()
 
