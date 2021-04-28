@@ -22,7 +22,7 @@ export async function handler(
 
   // define the aggregation pipeline
   let pipeline: object[] = [
-    { $match: { root: {$ne: ""}}},
+    { $match: { root: {$ne: null}}},
     {
       $addFields: {
         last24H: {
