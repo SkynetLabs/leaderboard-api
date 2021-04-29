@@ -168,6 +168,23 @@ export async function handler(
     ...pipeline,
     { $skip: skip },
     { $limit: limit },
+    {$lookup: {
+      from: "users",
+      localField: "userPK",
+      foreignField: "userPK",
+      as: "userMetadata",
+    }},
+    {$unwind: '$userMetadata'},
+    {$project: {
+        "userPK" : 1,
+        "newContentLast24H" : 1,
+        "newContentTotal" : 1,
+        "interactionsLast24H" : 1,
+        "interactionsTotal" : 1,
+        "rank" : 1,
+        "userMetadata.mySkyProfile": 1,
+        "userMetadata.skyIDProfile": 1
+    }}
   ]
 
   printPipeline(pipeline) // will only print if flag is set
