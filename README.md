@@ -53,12 +53,14 @@ Where it makes sense, the following filters can be applied:
 [
   {
     "identifier": "AABZ0Kjn6DP08XAVunUFRbo6AQYhML9TJCKHtr35_k4HQw",
+    "link": null,
     "total": 1,
     "last24H": 0,
     "rank": 1
   },
   {
-    "identifier": "AABJiWiYt823xEv5D8o0J7HyctPT1AdUS-_1hthF5GTfqg",
+    "identifier" : "sky://ed25519-b676e6191c8d8a164fe6097a0067b3a1abc92b25359e3493d4169089bd9edbe4/skyfeed-dev.hns/skytter.hns/posts/page_0.json#0",
+    "link" : "sia://skychess.hns/#/watch/838bd76bde8ddfa24f2683fe0241b3c613b0818eeb87e2f74095d383433632e6",
     "total": 1,
     "last24H": 0,
     "rank": 2
@@ -68,11 +70,41 @@ Where it makes sense, the following filters can be applied:
 // user ranking
 [
   {
-    "newContentLast24H": 0,
-    "newContentTotal": 2,
-    "interactionsLast24H": 0,
-    "interactionsTotal": 0,
-    "rank": 1
+    "userPK" : "89e5147864297b80f5ddf29711ba8c093e724213b0dcbefbc3860cc6d598cc35",
+    "newContentLast24H" : 270,
+    "newContentTotal" : 270,
+    "interactionsLast24H" : 306,
+    "interactionsTotal" : 306,
+    "rank" : 1,
+    "userMetadata" : {
+        "mySkyProfile" : {
+            "version" : 1,
+            "profile" : {
+                "username" : "dghelm",
+                "emailID" : "",
+                "firstName" : "Daniel",
+                "lastName" : "Helm",
+                "contact" : "",
+                "aboutMe" : "",
+                "location" : "Oklahoma City, OK",
+                "topicsHidden" : [],
+                "topicsDiscoverable" : [],
+                "avatar" : {},
+                "facebook" : "",
+                "twitter" : "",
+                "github" : "",
+                "reddit" : "",
+                "telegram" : ""
+            },
+            "lastUpdatedBy" : "awesomeskynet.hns",
+            "historyLog" : [ 
+                {
+                    "updatedBy" : "awesomeskynet.hns",
+                    "timestamp" : "2021-04-28T14:02:47.978Z"
+                }
+            ]
+        }
+    }
   }
 ]
 ```

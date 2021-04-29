@@ -33,6 +33,7 @@ export async function handler(
     {
       $group: {
         _id: '$root',
+        link: { $first: '$metadata.content.link' },
         total: { $sum: 1 },
         last24H: { $sum: { $cond: ['$last24H', 1, 0] } }
       }
@@ -44,6 +45,7 @@ export async function handler(
         rows: {
           $push: {
             identifier: '$_id',
+            link: '$link',
             total: { $toInt: '$total' },
             last24H: { $toInt: '$last24H' },
           }
@@ -60,6 +62,7 @@ export async function handler(
       $replaceRoot: {
         newRoot: {
           identifier: "$rows.identifier",
+          link: "$rows.link",
           total: "$rows.total",
           last24H: "$rows.last24H",
           rank: { $toInt: { $sum: ['$rank', 1] } }
