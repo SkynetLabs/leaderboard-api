@@ -143,6 +143,7 @@ export async function handler(
   ];
 
   // filter on user if necessary
+  let discovered = false
   if (userPK) {
     pipeline = [
       ...pipeline,
@@ -153,15 +154,14 @@ export async function handler(
     //
     // TODO: we might signal to the UI here we discovered a user to show a
     // message indicating he's being indexed
-    discoverUser(usersDB, userPK as string)
-      .then(discovered => {
-        if (discovered) {
-          console.log(`User ${userPK} was added to the DB`)
-        }
-      })
-      .catch(error => {
-        console.log(`Failure occured during user discovery ${userPK}`, error)
-      });
+    try {
+      discovered = await discoverUser(usersDB, userPK)
+      if (discovered) {
+        console.log(`User ${userPK} was added to the DB`)
+      }
+    } catch (error) {
+      console.log(`Failure occured during user discovery ${userPK}`, error)
+    }
   }
 
   pipeline = [
@@ -190,8 +190,26 @@ export async function handler(
   printPipeline(pipeline) // will only print if flag is set
 
   const userCatalogCursor = entriesDB.aggregate(pipeline)
-  const userCatalog = await userCatalogCursor.toArray()
+  let userCatalog = await userCatalogCursor.toArray()
+  let status = 200;
+
+  // if there are no results but we've discovered a new user, return an empty
+  // result item so we don't have to show a blank page
+  if (userCatalog.length === 0 && discovered) {
+    userCatalog = [
+      {
+        userPK,
+        newContentLast24H: 0,
+        newContentTotal: 0,
+        interactionsLast24H: 0,
+        interactionsTotal: 0,
+        rank: await usersDB.countDocuments(),
+        userMetadata: {},
+      }
+    ]
+    status = 201; // signal UI we've discovered this user
+  }
 
   res.set("Connection", "close")
-  res.status(200).json(userCatalog)
+  res.status(status).json(userCatalog)
 }
