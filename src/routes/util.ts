@@ -34,6 +34,9 @@ export async function upsertUser(userDB: Collection, userPK: string): Promise<bo
         commentsConsecNoneFound: new NumberInt(0),
 
         createdAt: new Date(),
+
+        // this triggers the scraper to do an immediate best effort scrape
+        discoveredAt: new Date(),
       }
     },
     { upsert: true }
