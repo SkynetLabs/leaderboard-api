@@ -197,6 +197,17 @@ export async function handler(
   // if there are no results but it's a valid userPK, return an empty
   // result item so we don't have to show a blank page
   if (userCatalog.length === 0 && isValidUserPK(userPK)) {
+    let userMetadata = {};
+    try {
+      const user = await usersDB.findOne({ userPK })
+      userMetadata = {
+        mySkyProfile: user.mySkyProfile,
+        skyIDProfile: user.skyIDProfile,
+      }
+    } catch (error) {
+      // do nothing
+    }
+
     userCatalog = [
       {
         userPK,
@@ -205,7 +216,7 @@ export async function handler(
         interactionsLast24H: 0,
         interactionsTotal: 0,
         rank: await usersDB.countDocuments(),
-        userMetadata: {},
+        userMetadata,
       }
     ]
   }
