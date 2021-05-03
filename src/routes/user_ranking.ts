@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import { Collection } from 'mongodb';
 import { EntryType } from './types';
-import { extractQueryStringParams, printPipeline, upsertUser as discoverUser } from './util';
+import { extractQueryStringParams, isValidUserPK, printPipeline, upsertUser as discoverUser } from './util';
 
 export async function handler(
   req: Request,
@@ -143,6 +143,7 @@ export async function handler(
   ];
 
   // filter on user if necessary
+  let status = 200;
   let discovered = false
   if (userPK) {
     pipeline = [
@@ -157,6 +158,7 @@ export async function handler(
     try {
       discovered = await discoverUser(usersDB, userPK)
       if (discovered) {
+        status = 201; // signal UI we've discovered this user
         console.log(`User ${userPK} was added to the DB`)
       }
     } catch (error) {
@@ -191,11 +193,10 @@ export async function handler(
 
   const userCatalogCursor = entriesDB.aggregate(pipeline)
   let userCatalog = await userCatalogCursor.toArray()
-  let status = 200;
 
-  // if there are no results but we've discovered a new user, return an empty
+  // if there are no results but it's a valid userPK, return an empty
   // result item so we don't have to show a blank page
-  if (userCatalog.length === 0 && discovered) {
+  if (userCatalog.length === 0 && isValidUserPK(userPK)) {
     userCatalog = [
       {
         userPK,
@@ -207,7 +208,6 @@ export async function handler(
         userMetadata: {},
       }
     ]
-    status = 201; // signal UI we've discovered this user
   }
 
   res.set("Connection", "close")

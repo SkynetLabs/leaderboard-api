@@ -4,11 +4,9 @@ import { Request } from 'express';
 import { DEBUG_PIPELINE } from "../consts";
 
 export async function upsertUser(userDB: Collection, userPK: string): Promise<boolean> {
-  // only upsert userPK if it matches the following regex
-  const regexp = /^(?<userPK>[a-z0-9]{64})$/;
-  const matchResult = userPK.match(regexp)
-  if (!matchResult || !matchResult.groups.userPK) {
-    return false;
+  // only upsert userPK if it's a valid userPK
+  if (!isValidUserPK(userPK)) {
+    return false
   }
 
   const { upsertedCount } = await userDB.updateOne(
@@ -108,6 +106,19 @@ export function extractQueryStringParams(
       sortBy,
       sortDir,
     }, null]
+}
+
+export function isValidUserPK(userPK: string): boolean {
+  if (!userPK || typeof userPK !== "string") {
+    return false;
+  }
+
+  const regexp = /^(?<userPK>[a-z0-9]{64})$/;
+  const matchResult = userPK.match(regexp)
+  if (!matchResult || !matchResult.groups.userPK) {
+    return false;
+  }
+  return true;
 }
 
 export function printPipeline(pipeline: object[]): void {
