@@ -15,22 +15,32 @@ export async function upsertUser(userDB: Collection, userPK: string): Promise<bo
       $setOnInsert: {
         userPK,
         skapps: [] as string[],
-        newContentCurrPage : new NumberInt(0),
+        newContentCurrPage: new NumberInt(0),
         newContentCurrNumEntries: new NumberInt(0),
         newContentConsecNoneFound: new NumberInt(0),
-
-        contentInteractionsCurrPage : new NumberInt(0),
+        newContentIndexDataLinks: {},
+        newContentCurrPageDataLinks: {},
+      
+        contentInteractionsCurrPage: new NumberInt(0),
         contentInteractionsNumEntries: new NumberInt(0),
-        contentInteractionsNoneFound: new NumberInt(0),
+        contentInteractionsConsecNoneFound: new NumberInt(0),
+        contentInteractionsIndexDataLinks: {},
+        contentInteractionsCurrPageDataLinks: {},
 
         postsCurrPage: new NumberInt(0),
         postsCurrNumEntries: new NumberInt(0),
         postsConsecNoneFound: new NumberInt(0),
+        postsIndexDataLinks: {},
+        postsCurrPageDataLinks: {},
 
         commentsCurrPage: new NumberInt(0),
         commentsCurrNumEntries: new NumberInt(0),
         commentsConsecNoneFound: new NumberInt(0),
+        commentsIndexDataLinks: {},
+        commentsCurrPageDataLinks: {},
 
+        followingDataLinks: {},
+      
         createdAt: new Date(),
 
         // this triggers the scraper to do an immediate best effort scrape
