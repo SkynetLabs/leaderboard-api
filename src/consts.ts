@@ -13,7 +13,7 @@ export const SCRAPERAPI_PORT =
   parseInt(process.env.SCRAPERAPI_PORT || '5000', 10)
 
 export const SCRAPERAPI_URL =
-  parseInt(process.env.SCRAPERAPI_URL || 'scraper', 10)
+  process.env.SCRAPERAPI_URL || 'scraper'
   
 export const LEADERBOARDAPI_PORT =
   parseInt(process.env.LEADERBOARDAPI_PORT || '3000', 10)
