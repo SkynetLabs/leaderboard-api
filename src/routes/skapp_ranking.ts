@@ -79,11 +79,9 @@ export async function handler(
 
     // if it's a valid userPK, try and discover and/or scrape the user
     if (isValidUserPK(userPK)) {
-      console.log('user discovery initiated for user', userPK)
       const endpoint = `${SCRAPERAPI_URL}:${SCRAPERAPI_PORT}/userdiscovery?userPK=${userPK}&scrape=true`
       axios
         .get(endpoint)
-        .then(response => { console.log('user discovery result:', response) })
         .catch(error => { console.log('user discovery error:', error) })
     }
   }
