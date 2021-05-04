@@ -76,6 +76,16 @@ export async function handler(
       ...pipeline,
       { $match: { userPK: { $regex: userPK } } },
     ]
+
+    // if it's a valid userPK, try and discover and/or scrape the user
+    if (isValidUserPK(userPK)) {
+      console.log('user discovery initiated for user', userPK)
+      const endpoint = `${SCRAPERAPI_URL}:${SCRAPERAPI_PORT}/userdiscovery?userPK=${userPK}&scrape=true`
+      axios
+        .get(endpoint)
+        .then(response => { console.log('user discovery result:', response) })
+        .catch(error => { console.log('user discovery error:', error) })
+    }
   }
 
   // filter on skapp name if necessary
@@ -96,21 +106,7 @@ export async function handler(
   
   const skappsCatalogCursor = entriesDB.aggregate(pipeline)
   let skappsCatalog = await skappsCatalogCursor.toArray()
-  let status = 200;
-
-  // if there are no results but it's a valid userPK, try and discover and/or
-  // scrape the user
-  if (skappsCatalog.length === 0 && isValidUserPK(userPK)) {
-    const endpoint = `${SCRAPERAPI_URL}:${SCRAPERAPI_PORT}/userdiscovery?userPK=${userPK}&scrape=true`
-
-    axios
-      .get(endpoint)
-      .then(response => { console.log('user discovery result:', response) })
-      .catch(error => { console.log('user discovery error:', error) })
-
-    status = 201;
-  }
 
   res.set("Connection", "close")
-  res.status(status).json(skappsCatalog);
+  res.status(200).json(skappsCatalog);
 }

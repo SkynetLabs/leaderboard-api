@@ -150,6 +150,17 @@ export async function handler(
       ...pipeline,
       { $match: { userPK: { $regex: userPK } } },
     ]
+
+    // if the userPK is a valid on, send it to user discovery
+    if (isValidUserPK(userPK)) {
+      console.log('user discovery initiated for user', userPK)
+      const endpoint = `${SCRAPERAPI_URL}:${SCRAPERAPI_PORT}/userdiscovery?userPK=${userPK}&scrape=true`
+
+      axios
+        .get(endpoint)
+        .then(response => { console.log('user discovery result:', response) })
+        .catch(error => {console.log('user discovery error:', error)})
+    }
   }
 
   pipeline = [
@@ -179,18 +190,10 @@ export async function handler(
 
   const userCatalogCursor = entriesDB.aggregate(pipeline)
   let userCatalog = await userCatalogCursor.toArray()
-  let status = 200;
 
-  // if there are no results but it's a valid userPK, try and discover and/or
-  // scrape the user and return an empty result for the time being
+  // if there are no results but it's a valid userPK, return an empty result for
+  // the time being
   if (userCatalog.length === 0 && isValidUserPK(userPK)) {
-    const endpoint = `${SCRAPERAPI_URL}:${SCRAPERAPI_PORT}/userdiscovery?userPK=${userPK}&scrape=true`
-
-    axios
-      .get(endpoint)
-      .then(response => { console.log('user discovery result:', response) })
-      .catch(error => {console.log('user discovery error:', error)})
-
     let userMetadata = {};
     try {
       const user = await usersDB.findOne({ userPK })
@@ -213,9 +216,8 @@ export async function handler(
         userMetadata,
       }
     ]
-    status = 201;
   }
 
   res.set("Connection", "close")
-  res.status(status).json(userCatalog)
+  res.status(200).json(userCatalog)
 }
