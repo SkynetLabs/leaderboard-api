@@ -1,7 +1,9 @@
+import axios from 'axios';
 import { Request, Response } from 'express';
 import { Collection } from 'mongodb';
+import { SCRAPERAPI_PORT, SCRAPERAPI_URL } from '../consts';
 import { EntryType } from './types';
-import { extractQueryStringParams, isValidUserPK, printPipeline, upsertUser as discoverUser } from './util';
+import { extractQueryStringParams, isValidUserPK, printPipeline } from './util';
 
 export async function handler(
   req: Request,
@@ -143,27 +145,11 @@ export async function handler(
   ];
 
   // filter on user if necessary
-  let status = 200;
-  let discovered = false
   if (userPK) {
     pipeline = [
       ...pipeline,
       { $match: { userPK: { $regex: userPK } } },
     ]
-
-    // run user discovery, we don't await here on purpose
-    //
-    // TODO: we might signal to the UI here we discovered a user to show a
-    // message indicating he's being indexed
-    try {
-      discovered = await discoverUser(usersDB, userPK)
-      if (discovered) {
-        status = 201; // signal UI we've discovered this user
-        console.log(`User ${userPK} was added to the DB`)
-      }
-    } catch (error) {
-      console.log(`Failure occured during user discovery ${userPK}`, error)
-    }
   }
 
   pipeline = [
@@ -193,10 +179,18 @@ export async function handler(
 
   const userCatalogCursor = entriesDB.aggregate(pipeline)
   let userCatalog = await userCatalogCursor.toArray()
+  let status = 200;
 
-  // if there are no results but it's a valid userPK, return an empty
-  // result item so we don't have to show a blank page
+  // if there are no results but it's a valid userPK, try and discover and/or
+  // scrape the user and return an empty result for the time being
   if (userCatalog.length === 0 && isValidUserPK(userPK)) {
+    const endpoint = `${SCRAPERAPI_URL}:${SCRAPERAPI_PORT}/userdiscovery?userPK=${userPK}&scrape=true`
+
+    axios
+      .get(endpoint)
+      .then(response => { console.log('user discovery result:', response) })
+      .catch(error => {console.log('user discovery error:', error)})
+
     let userMetadata = {};
     try {
       const user = await usersDB.findOne({ userPK })
@@ -219,6 +213,7 @@ export async function handler(
         userMetadata,
       }
     ]
+    status = 201;
   }
 
   res.set("Connection", "close")

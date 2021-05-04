@@ -16,7 +16,7 @@ async function bootAPI(port: number, db: MongoDB): Promise<void> {
 
   // define routes
   app.get('/skapps', (req, res) => {
-    skappsHandler(req, res, entriesDB, usersDB)
+    skappsHandler(req, res, entriesDB)
   });
   app.get('/users', (req, res) => {
     userHandler(req, res, entriesDB, usersDB)

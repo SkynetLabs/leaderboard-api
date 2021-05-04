@@ -17,6 +17,7 @@
   "dependencies": {
     "@types/mongodb": "^3.6.12",
     "@types/node": "^12.20.7",
+    "axios": "^0.21.1",
     "dotenv": "^8.2.0",
     "express": "^4.17.1",
     "mongodb": "^3.6.5"

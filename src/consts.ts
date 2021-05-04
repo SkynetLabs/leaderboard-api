@@ -9,8 +9,14 @@ export const MONGO_CONNECTION_STRING =
 export const MONGO_DB_NAME =
   process.env.MONGO_DB_NAME || 'content-record'
 
+export const SCRAPERAPI_PORT =
+  parseInt(process.env.SCRAPERAPI_PORT || '5000', 10)
+
+export const SCRAPERAPI_URL =
+  parseInt(process.env.SCRAPERAPI_URL || 'scraper', 10)
+  
 export const LEADERBOARDAPI_PORT =
-  parseInt(process.env.PORT || '3000', 10)
+  parseInt(process.env.LEADERBOARDAPI_PORT || '3000', 10)
 
 export const DEBUG_PIPELINE =
   process.env.DEBUG_PIPELINE === 'true' || false

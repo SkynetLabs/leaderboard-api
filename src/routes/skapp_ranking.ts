@@ -1,12 +1,13 @@
+import axios from 'axios';
 import { Request, Response } from 'express';
 import { Collection } from 'mongodb';
-import { extractQueryStringParams, printPipeline, upsertUser as discoverUser } from './util';
+import { SCRAPERAPI_PORT, SCRAPERAPI_URL } from '../consts';
+import { extractQueryStringParams, isValidUserPK, printPipeline } from './util';
 
 export async function handler(
   req: Request,
   res: Response,
   entriesDB: Collection,
-  usersDB: Collection,
 ): Promise<void> {
   // extract and validate query string parameters
   const defaultSortColumn = 'total'
@@ -75,20 +76,6 @@ export async function handler(
       ...pipeline,
       { $match: { userPK: { $regex: userPK } } },
     ]
-
-    // run user discovery, we don't await here on purpose
-    //
-    // TODO: we might signal to the UI here we discovered a user to show a
-    // message indicating he's being indexed
-    discoverUser(usersDB, userPK as string)
-      .then(discovered => {
-        if (discovered) {
-          console.log(`User ${userPK} was added to the DB`)
-        }
-      })
-      .catch(error => {
-        console.log(`Failure occured during user discovery ${userPK}`, error)
-      });
   }
 
   // filter on skapp name if necessary
@@ -108,8 +95,22 @@ export async function handler(
   printPipeline(pipeline) // will only print if flag is set
   
   const skappsCatalogCursor = entriesDB.aggregate(pipeline)
-  const skappsCatalog = await skappsCatalogCursor.toArray()
+  let skappsCatalog = await skappsCatalogCursor.toArray()
+  let status = 200;
+
+  // if there are no results but it's a valid userPK, try and discover and/or
+  // scrape the user
+  if (skappsCatalog.length === 0 && isValidUserPK(userPK)) {
+    const endpoint = `${SCRAPERAPI_URL}:${SCRAPERAPI_PORT}/userdiscovery?userPK=${userPK}&scrape=true`
+
+    axios
+      .get(endpoint)
+      .then(response => { console.log('user discovery result:', response) })
+      .catch(error => { console.log('user discovery error:', error) })
+
+    status = 201;
+  }
 
   res.set("Connection", "close")
-  res.status(200).json(skappsCatalog);
+  res.status(status).json(skappsCatalog);
 }
