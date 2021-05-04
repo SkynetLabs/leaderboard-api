@@ -22,7 +22,8 @@ export async function handler(
 
   // define the aggregation pipeline
   let pipeline: object[] = [
-    { $match: { root: { $exists: true, $ne: "" }}},
+    { $match: { root: { $exists: true, $ne: "" } } },
+    { $sort: { type : -1 }}, // NEWCONTENT > INTERACTION (used for $first meta)
     {
       $addFields: {
         last24H: {
@@ -33,6 +34,8 @@ export async function handler(
     {
       $group: {
         _id: '$root',
+        skapp: { $first: '$skapp' },
+        metadata: { $first: '$metadata.skylinkMetadata' },
         link: { $first: '$metadata.content.link' },
         total: { $sum: 1 },
         last24H: { $sum: { $cond: ['$last24H', 1, 0] } }
@@ -45,6 +48,8 @@ export async function handler(
         rows: {
           $push: {
             identifier: '$_id',
+            skapp: '$skapp',
+            metadata: '$metadata',
             link: '$link',
             total: { $toInt: '$total' },
             last24H: { $toInt: '$last24H' },
@@ -62,6 +67,8 @@ export async function handler(
       $replaceRoot: {
         newRoot: {
           identifier: "$rows.identifier",
+          skapp: "$rows.skapp",
+          metadata: '$rows.metadata',
           link: "$rows.link",
           total: "$rows.total",
           last24H: "$rows.last24H",
