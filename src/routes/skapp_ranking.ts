@@ -82,7 +82,13 @@ export async function handler(
       const endpoint = `${SCRAPERAPI_URL}:${SCRAPERAPI_PORT}/userdiscovery?userPK=${userPK}&scrape=true`
       axios
         .get(endpoint)
-        .catch(error => { console.log('user discovery error:', error) })
+        .catch(error => {
+          if (error.response && error.response.status === 429) {
+            console.log('scrape did not execute, too many requests')
+            return;
+          }
+          console.log('user discovery error:', error)
+        })
     }
   }
 
