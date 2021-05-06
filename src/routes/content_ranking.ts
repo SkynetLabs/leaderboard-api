@@ -38,7 +38,22 @@ export async function handler(
         metadata: { $first: '$metadata.skylinkMetadata' },
         link: { $first: '$metadata.content.link' },
         total: { $sum: 1 },
-        last24H: { $sum: { $cond: ['$last24H', 1, 0] } }
+        last24H: { $sum: { $cond: ['$last24H', 1, 0] } },
+
+        // these fields will be used to set "creator"
+        type: { $first: '$type' },
+        user: { $first: '$userPK' },
+      }
+    },
+    {
+      $addFields: {
+        creator: {
+          $cond: [
+            { $eq: ['$type', 'newcontent'] },
+            '$user',
+            'unknown'
+          ]
+        },
       }
     },
     { $sort:  { [sortBy]: sortDir === 'asc' ? 1 : -1, _id: -1 }},
@@ -48,6 +63,7 @@ export async function handler(
         rows: {
           $push: {
             identifier: '$_id',
+            creator: '$creator',
             skapp: '$skapp',
             metadata: '$metadata',
             link: '$link',
@@ -67,6 +83,7 @@ export async function handler(
       $replaceRoot: {
         newRoot: {
           identifier: "$rows.identifier",
+          creator: "$rows.creator",
           skapp: "$rows.skapp",
           metadata: '$rows.metadata',
           link: "$rows.link",
