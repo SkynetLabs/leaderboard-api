@@ -1,11 +1,13 @@
 import { Request, Response } from 'express';
 import { Collection } from 'mongodb';
+import { EListType, IList } from '../types';
 import { extractQueryStringParams, isValidUserPK, printPipeline } from './util';
 
 export async function handler(
   req: Request,
   res: Response,
   entriesDB: Collection,
+  listsDB: Collection<IList>,
 ): Promise<void> {  
   // extract and validate query string parameters
   const defaultSortColumn = 'createdAt'
@@ -28,6 +30,14 @@ export async function handler(
   if (!isValidUserPK(userPK)) {
     res.status(400).json({ error: `value '${userPK}' for param 'userPK' is considered invalid` })
     return;
+  }
+
+  // fetch user blocklist
+  const blocklist = await listsDB.findOne({ type: EListType.USER_BLOCKLIST })
+  const blockListItems = blocklist ? blocklist.items : [];
+  if (blockListItems.includes(userPK)) {
+    res.status(400).json({ error: `'${userPK}' is blocked`})
+    return; 
   }
 
   // define the aggregation pipeline

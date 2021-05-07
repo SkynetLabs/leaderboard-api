@@ -1,6 +1,6 @@
 import { Request } from 'express';
 import { DEBUG_PIPELINE } from "../consts";
-import { QueryStringParams } from "./types";
+import { QueryStringParams } from '../types';
 
 export function extractQueryStringParams(
   req: Request,

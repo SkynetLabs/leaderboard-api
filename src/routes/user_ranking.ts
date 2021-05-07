@@ -2,7 +2,7 @@ import axios from 'axios';
 import { Request, Response } from 'express';
 import { Collection } from 'mongodb';
 import { SCRAPERAPI_PORT, SCRAPERAPI_URL } from '../consts';
-import { EntryType } from './types';
+import { EListType, EntryType, IList } from '../types';
 import { extractQueryStringParams, isValidUserPK, printPipeline } from './util';
 
 export async function handler(
@@ -10,6 +10,7 @@ export async function handler(
   res: Response,
   entriesDB: Collection,
   usersDB: Collection,
+  listsDB: Collection<IList>,
 ): Promise<void> {  
   // extract and validate query string parameters
   const defaultSortColumn = 'newContentTotal'
@@ -28,7 +29,21 @@ export async function handler(
   const yesterday = new Date(new Date().setDate(new Date().getDate() - 1))
 
   // define the aggregation pipeline
-  let pipeline: object[] = [
+  let pipeline: object[] = [];
+
+  // fetch user blocklist
+  const blocklist = await listsDB.findOne({ type: EListType.USER_BLOCKLIST })
+  const blockListItems = blocklist ? blocklist.items : [];
+  if (blockListItems.length) {
+    pipeline = [
+      ...pipeline,
+      { $match: { userPK: {$nin: blockListItems}}}
+    ]
+  }
+
+  // extend pipeline
+  pipeline = [
+    ...pipeline,
     { $match: { root: {$exists: true, $ne: ""}}},
     {
       $addFields: {

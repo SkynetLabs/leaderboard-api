@@ -2,12 +2,14 @@ import axios from 'axios';
 import { Request, Response } from 'express';
 import { Collection } from 'mongodb';
 import { SCRAPERAPI_PORT, SCRAPERAPI_URL } from '../consts';
+import { EListType, IList } from '../types';
 import { extractQueryStringParams, isValidUserPK, printPipeline } from './util';
 
 export async function handler(
   req: Request,
   res: Response,
   entriesDB: Collection,
+  listsDB: Collection<IList>,
 ): Promise<void> {
   // extract and validate query string parameters
   const defaultSortColumn = 'total'
@@ -23,7 +25,21 @@ export async function handler(
   const {userPK, skapp, skip, limit, sortBy, sortDir} = params
 
   // define the aggregation pipeline
-  let pipeline: object[] = [
+  let pipeline: object[] = [];
+
+  // fetch user blocklist
+  const blocklist = await listsDB.findOne({ type: EListType.USER_BLOCKLIST })
+  const blockListItems = blocklist ? blocklist.items : [];
+  if (blockListItems.length) {
+    pipeline = [
+      ...pipeline,
+      { $match: { userPK: {$nin: blockListItems}}}
+    ]
+  }
+
+  // extend pipeline
+  pipeline = [
+    ...pipeline,
     { $match: { skapp: {$exists: true, $ne: ""}, root: {$exists: true, $ne: ""}}},
     {
       $addFields: {

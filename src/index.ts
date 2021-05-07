@@ -5,11 +5,13 @@ import { handler as userHandler } from './routes/user_ranking';
 import { handler as userContentHandler} from './routes/user_content';
 import { handler as skappsHandler } from './routes/skapp_ranking';
 import { handler as contentHandler } from './routes/content_ranking';
+import { IContent, IList, IUser } from './types';
 
 async function bootAPI(port: number, db: MongoDB): Promise<void> {
   // fetch db collections
-  const entriesDB = await db.getCollection('entries');
-  const usersDB = await db.getCollection('users');
+  const entriesDB = await db.getCollection<IContent>('entries');
+  const usersDB = await db.getCollection<IUser>('users');
+  const listsDB = await db.getCollection<IList>('lists');
 
   // boot the express app
   const app = express();
@@ -17,16 +19,16 @@ async function bootAPI(port: number, db: MongoDB): Promise<void> {
 
   // define routes
   app.get('/skapps', (req, res) => {
-    skappsHandler(req, res, entriesDB)
+    skappsHandler(req, res, entriesDB, listsDB)
   });
   app.get('/users', (req, res) => {
-    userHandler(req, res, entriesDB, usersDB)
+    userHandler(req, res, entriesDB, usersDB, listsDB)
   });
   app.get('/usercontent', (req, res) => {
-    userContentHandler(req, res, entriesDB)
+    userContentHandler(req, res, entriesDB, listsDB)
   });
   app.get('/content', (req, res) => {
-    contentHandler(req, res, entriesDB)
+    contentHandler(req, res, entriesDB, listsDB)
   });
 }
 

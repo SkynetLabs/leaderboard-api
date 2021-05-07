@@ -1,11 +1,13 @@
 import { Request, Response } from 'express';
 import { Collection } from 'mongodb';
+import { EListType, IList } from '../types';
 import { extractQueryStringParams, printPipeline } from './util';
 
 export async function handler(
   req: Request,
   res: Response,
   entriesDB: Collection,
+  listsDB: Collection<IList>,
 ): Promise<void> {
   // extract and validate query string parameters
   const defaultSortColumn = 'total'
@@ -21,7 +23,22 @@ export async function handler(
   const {identifier, skapp, skip, limit, sortBy, sortDir} = params
 
   // define the aggregation pipeline
-  let pipeline: object[] = [
+  let pipeline: object[] = [];
+
+  // fetch user blocklist
+  const blocklist = await listsDB.findOne({ type: EListType.USER_BLOCKLIST })
+  const blockListItems = blocklist ? blocklist.items : [];
+  if (blockListItems.length) {
+    pipeline = [
+      ...pipeline,
+      { $match: { userPK: {$nin: blockListItems}}}
+    ]
+  }
+
+  console.log(blockListItems)
+  // extend pipeline
+  pipeline = [
+    ...pipeline,
     { $match: { root: { $exists: true, $ne: "" } } },
     { $sort: { type : -1 }}, // NEWCONTENT > INTERACTION (used for $first meta)
     {
