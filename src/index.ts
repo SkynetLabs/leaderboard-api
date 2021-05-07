@@ -2,8 +2,9 @@ import express from 'express';
 import { LEADERBOARDAPI_PORT } from './consts';
 import { MongoDB } from './mongodb';
 import { handler as userHandler } from './routes/user_ranking';
+import { handler as userContentHandler} from './routes/user_content';
 import { handler as skappsHandler } from './routes/skapp_ranking';
-import { handler as contentHandler} from './routes/content_ranking';
+import { handler as contentHandler } from './routes/content_ranking';
 
 async function bootAPI(port: number, db: MongoDB): Promise<void> {
   // fetch db collections
@@ -20,6 +21,9 @@ async function bootAPI(port: number, db: MongoDB): Promise<void> {
   });
   app.get('/users', (req, res) => {
     userHandler(req, res, entriesDB, usersDB)
+  });
+  app.get('/usercontent', (req, res) => {
+    userContentHandler(req, res, entriesDB)
   });
   app.get('/content', (req, res) => {
     contentHandler(req, res, entriesDB)
