@@ -11,11 +11,12 @@ scrape these yourself. Check out the scraper
 ## API
 
 ### Routes
-The API serves three main routes to support the leaderboard web app:
+The API serves four main routes to support the leaderboard web app:
 
 - skapp ranking
 - content ranking
 - user ranking
+- user content
 
 ### Query String Parameters
 By default all routes support pagination through the following query string
@@ -107,7 +108,33 @@ Where it makes sense, the following filters can be applied:
     }
   }
 ]
+
+// user content
+[
+    {
+    "entryType": "NEWCONTENT",
+    "userPK": "fbc7ab46a9c7f203dbf52e85a3ac124d4c89a09931269244941eeb96a35831f0",
+    "skapp": "webgames-ide.hns",
+    "identifier": "EACJ_bkB9JOeSSvECdnlQLvMEmZ0VNQWqe0G9POg_JicEA",
+    "metadata": {
+      "type": "SavedGame",
+      "uri": "webgames-ide.hns/games/SpaceShooter.json",
+      "prev": "CAC5ppiLl77n6f7Wy8naRvkjbN4L6mVVUhjlBgd1Zb1ecg",
+      "skylinkMetadata": {
+        "contentType": "application/json",
+        "metadata": {
+          "filename": "dk:efd521383526a8e7f7736b43c039caee62a54bba47b84f21c50cdde0ff088bb8",
+          "length": 7947
+        },
+        "portalUrl": "https://siasky.net",
+        "skylink": "sia:EACJ_bkB9JOeSSvECdnlQLvMEmZ0VNQWqe0G9POg_JicEA"
+      }
+    },
+    "createdAt": "2021-04-28T11:52:41.000Z"
+  }
+]
 ```
+
 
 ## Usage
 
