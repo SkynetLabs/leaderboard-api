@@ -18,7 +18,7 @@ export async function handler(
   }
 
   // extract params
-  const {identifier, skip, limit, sortBy, sortDir} = params
+  const {identifier, skapp, skip, limit, sortBy, sortDir} = params
 
   // define the aggregation pipeline
   let pipeline: object[] = [
@@ -100,6 +100,14 @@ export async function handler(
     pipeline = [
       ...pipeline,
       { $match: { identifier: {$regex: identifier } } },
+    ]
+  }
+
+  // filter on skapp name if necessary
+  if (skapp) {
+    pipeline = [
+      ...pipeline,
+      { $match: { skapp: { $regex: skapp, $options: "i" } } },
     ]
   }
 
