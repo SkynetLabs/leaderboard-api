@@ -35,7 +35,6 @@ export async function handler(
     ]
   }
 
-  console.log(blockListItems)
   // extend pipeline
   pipeline = [
     ...pipeline,
