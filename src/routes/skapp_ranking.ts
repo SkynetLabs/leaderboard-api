@@ -100,7 +100,7 @@ export async function handler(
         .get(endpoint)
         .catch(error => {
           if (error.response && error.response.status === 429) {
-            console.log('scrape did not execute, too many requests')
+            console.log(`${new Date().toLocaleString()}: scrape did not execute for user ${userPK}, too many requests`);
             return;
           }
           console.log('user discovery error:', error)
