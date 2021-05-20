@@ -53,6 +53,7 @@ export async function handler(
         skapp: { $first: '$skapp' },
         metadata: { $first: '$metadata.skylinkMetadata' },
         link: { $first: '$metadata.content.link' },
+        url: { $first: '$metadata.content.media.image.url' },
         total: { $sum: 1 },
         last24H: { $sum: { $cond: ['$last24H', 1, 0] } },
 
@@ -82,7 +83,7 @@ export async function handler(
             creator: '$creator',
             skapp: '$skapp',
             metadata: '$metadata',
-            link: '$link',
+            link: { $ifNull: ['$link', '$url'] },
             total: { $toInt: '$total' },
             last24H: { $toInt: '$last24H' },
           }
