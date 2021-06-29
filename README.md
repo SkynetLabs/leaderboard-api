@@ -144,3 +144,12 @@ exposed at port 4000 by default.
 ```bash
 docker-compose up -d
 ```
+
+## Deploying on Akash
+
+[See the example deploy.yml](./deploy.yml) which can be deployed as-is on 
+Akash, or customised to set your own domain or open access to the included 
+MongoDB container.
+
+Refer to the [Akash Docs](https://docs.akash.network/guides/deployment) for 
+more information on deploying on Akash.
