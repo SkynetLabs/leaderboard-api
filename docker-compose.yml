@@ -9,7 +9,7 @@ services:
     environment:
       MONGO_CONNECTION_STRING: "mongodb://mongo:27017"
       DEBUG_ENABLED: "false"
-      PORT: "4000"
+      LEADERBOARDAPI_PORT: "4000"
     ports:
       - "4000:4000"
   mongo:
