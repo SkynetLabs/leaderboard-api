@@ -1,0 +1,67 @@
+---
+version: "2.0"
+
+services:
+  leaderboard-api:
+    image: skynetlabs/leaderboard-api
+    env:
+      - MONGO_CONNECTION_STRING=mongodb://mongo:27017
+      - DEBUG_ENABLED=false
+      - LEADERBOARDAPI_PORT=4000
+    depends_on:
+      - service: mongo
+    expose:
+      - port: 4000
+        as: 80
+        to:
+          - global: true
+        accept:
+          - my.domain.com
+  mongo:
+    image: bitnami/mongodb:4.2
+    env:
+      - MONGO_INITDB_ROOT_USERNAME=root
+      - MONGO_INITDB_ROOT_PASSWORD=root
+    expose:
+      - port: 27017
+        to:
+          # - global: true # uncomment to access Mongo externally
+          - service: leaderboard-api
+
+profiles:
+  compute:
+    leaderboard-api:
+      resources:
+        cpu:
+          units: 0.5
+        memory:
+          size: 1Gi
+        storage:
+          size: 1Gi
+    mongo:
+      resources:
+        cpu:
+          units: 0.5
+        memory:
+          size: 1Gi
+        storage:
+          size: 1Gi
+  placement:
+    dcloud:
+      pricing:
+        leaderboard-api:
+          denom: uakt
+          amount: 10
+        mongo:
+          denom: uakt
+          amount: 10
+
+deployment:
+  leaderboard-api:
+    dcloud:
+      profile: leaderboard-api
+      count: 1
+  mongo:
+    dcloud:
+      profile: mongo
+      count: 1
