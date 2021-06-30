@@ -1,4 +1,5 @@
 import express from 'express';
+import cors from 'cors';
 import { LEADERBOARDAPI_PORT } from './consts';
 import { MongoDB } from './mongodb';
 import { handler as userHandler } from './routes/user_ranking';
@@ -16,6 +17,7 @@ async function bootAPI(port: number, db: MongoDB): Promise<void> {
   // boot the express app
   const app = express();
   app.listen(port);
+  app.use(cors())
 
   // define routes
   app.get('/skapps', (req, res) => {
